@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration of kashun";
+  description = "Home Manager configuration of the current user";
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.
@@ -12,6 +12,7 @@
   };
 
   outputs = { nixpkgs, home-manager, flake-utils, ... }:
+    let userConig = (import ./config.nix { }); in with userConig;
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
@@ -33,7 +34,7 @@
         };
       in
       {
-        packages.homeConfigurations."kashun" = baseConfig (modules ++ [ shortcutModule ]);
+        packages.homeConfigurations."${username}" = baseConfig (modules ++ [ shortcutModule ]);
       } // {
         formatter = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
       }

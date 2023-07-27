@@ -1,10 +1,10 @@
 { config, pkgs, ... }:
 
-let username = "kashun"; in {
+let userConig = (import ./config.nix { }); in with userConig; rec {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = username;
-  home.homeDirectory = "/home/${username}";
+  home.homeDirectory = homeDirectory;
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -68,12 +68,15 @@ let username = "kashun"; in {
   # Let Home Manager install and manage itself.
   programs = let enabled = { enable = true; }; in {
     home-manager = enabled;
-    vscode = enabled;
+    vscode = {
+      enable = false;
+      package = pkgs.vscode;
+    };
     firefox = enabled;
     git = {
       enable = true;
       userName = username;
-      userEmail = "kashun@berkeley.edu";
+      userEmail = email;
     };
   };
 }
