@@ -69,8 +69,11 @@ let userConig = (import ./config.nix { }); in with userConig; rec {
   programs = let enabled = { enable = true; }; in {
     home-manager = enabled;
     vscode = {
-      enable = false;
-      package = pkgs.vscode;
+      enable = true;
+      extensions = with pkgs.vscode-extensions; [
+        bbenoist.nix
+        ms-vscode-remote.remote-ssh
+      ];
     };
     firefox = enabled;
     git = {

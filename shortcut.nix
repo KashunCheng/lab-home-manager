@@ -8,7 +8,7 @@ in
   home.file =
     let
       installedPackages = map (v: { name = v.name; outPath = v.outPath; }) homeManagerConfiguration.config.home.packages;
-      findInstalledPackageDerivation = regex: lib.lists.findFirst (s: builtins.isList s.match) null (map (v: { match = builtins.match regex v.name; derivationOutPath = v.outPath; }) installedPackages);
+      findInstalledPackageDerivation = regex: lib.lists.findFirst (s: builtins.isList s.match) null (map (v: { match = builtins.match regex v.name; derivation = v; }) installedPackages);
       generateShortcut = filename: drv: {
         "Desktop/${filename}" = {
           enable = true;
@@ -18,7 +18,7 @@ in
           target = "Desktop/${filename}";
           text = null;
           recursive = false;
-          source = /. + builtins.unsafeDiscardStringContext "${drv}/share/applications/${filename}";
+          source = drv + "/share/applications/${filename}";
         };
       };
       mergeFiles = listOfFile: builtins.foldl' lib.trivial.mergeAttrs { } listOfFile;
@@ -27,7 +27,7 @@ in
           let
             installedPackage = findInstalledPackageDerivation regex;
           in
-          if builtins.isNull installedPackage then { } else generateShortcut filename installedPackage.derivationOutPath)
+          if builtins.isNull installedPackage then { } else generateShortcut filename installedPackage.derivation)
         shortcut;
     in
     mergeFiles files;
